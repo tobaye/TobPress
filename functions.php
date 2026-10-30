@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'TOBPRESS_VERSION', '1.1.0' );
+define( 'TOBPRESS_VERSION', '1.1.1' );
 
 /**
  * Theme setup.
