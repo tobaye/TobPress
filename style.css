@@ -4,7 +4,7 @@ Theme URI: https://github.com/tobaye/TobPress
 Author: Mi
 Author URI: https://helyn.eu.org
 Description: A light, modern hybrid WordPress theme for personal blogs. Design tokens live in theme.json; the Customizer only carries blog-specific switches. Light blue-and-white by default, dark-mode ready, zero jQuery.
-Version: 1.0.1
+Version: 1.1.0
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.0
@@ -848,6 +848,16 @@ html[data-theme="dark"] .tb-theme-toggle .tb-icon-moon {
 .tb-widget-title {
 	margin: 0 0 0.7em;
 	font-size: var(--wp--preset--font-size--medium);
+}
+
+.tb-widget-title::after {
+	content: "";
+	display: block;
+	width: 32px;
+	height: 3px;
+	margin-top: 0.35em;
+	border-radius: 999px;
+	background: linear-gradient(90deg, var(--tb-primary, #2f7fe0), var(--tb-accent));
 }
 
 .tb-widget ul {
@@ -1880,6 +1890,183 @@ html[data-theme="dark"] .tb-theme-toggle .tb-icon-moon {
 	.tb-brand img {
 		max-height: 44px;
 	}
+}
+
+/* ----------------------------------------------------------------
+   Welcome strip / author card / mobile tab bar
+---------------------------------------------------------------- */
+.tb-welcome {
+	display: flex;
+	align-items: center;
+	gap: var(--wp--preset--spacing--m);
+	flex-wrap: wrap;
+	margin-bottom: var(--wp--preset--spacing--xl);
+	padding: var(--wp--preset--spacing--m) var(--wp--preset--spacing--l);
+	background: var(--tb-surface);
+	border: 1px solid var(--tb-border);
+	border-radius: var(--tb-radius);
+}
+
+.tb-welcome-avatar {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.tb-welcome-main {
+	flex: 1 1 220px;
+	min-width: 0;
+}
+
+.tb-welcome-title {
+	margin: 0;
+	font-size: var(--wp--preset--font-size--large);
+}
+
+.tb-welcome-text {
+	margin: 0.15em 0 0;
+	color: var(--tb-muted);
+	font-size: var(--wp--preset--font-size--small);
+}
+
+.tb-welcome-chips {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.tb-chip {
+	padding: 0.28em 0.8em;
+	border: 1px solid var(--tb-border);
+	border-radius: 999px;
+	color: var(--tb-muted);
+	font-size: var(--wp--preset--font-size--small);
+	white-space: nowrap;
+}
+
+.tb-author-card {
+	display: flex;
+	align-items: center;
+	gap: var(--wp--preset--spacing--m);
+	flex-wrap: wrap;
+	margin-top: var(--wp--preset--spacing--l);
+	padding: var(--wp--preset--spacing--m) var(--wp--preset--spacing--l);
+	background: var(--tb-surface);
+	border: 1px solid var(--tb-border);
+	border-radius: var(--tb-radius);
+}
+
+.tb-author-avatar {
+	border-radius: 50%;
+}
+
+.tb-author-main {
+	flex: 1 1 240px;
+	min-width: 0;
+}
+
+.tb-author-name {
+	margin: 0;
+	font-weight: 700;
+}
+
+.tb-author-count {
+	margin-inline-start: 0.6em;
+	color: var(--tb-muted);
+	font-size: var(--wp--preset--font-size--small);
+	font-weight: 400;
+}
+
+.tb-author-bio {
+	margin: 0.2em 0 0;
+	color: var(--tb-muted);
+	font-size: var(--wp--preset--font-size--small);
+}
+
+.tb-author-more {
+	padding: 0.4em 1em;
+	border: 1px solid var(--tb-border);
+	border-radius: 999px;
+	color: var(--tb-text);
+	font-size: var(--wp--preset--font-size--small);
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.tb-author-more:hover {
+	border-color: var(--tb-primary, #2f7fe0);
+	color: var(--tb-primary, #2f7fe0);
+}
+
+.tb-footer {
+	position: relative;
+}
+
+.tb-footer::before {
+	content: "";
+	position: absolute;
+	inset-inline: 0;
+	top: -1px;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, var(--tb-primary, #2f7fe0), var(--tb-accent), transparent);
+	opacity: 0.55;
+	pointer-events: none;
+}
+
+/* Mobile bottom tab bar */
+.tb-tabbar {
+	display: none;
+}
+
+@media (max-width: 860px) {
+	.tb-tabbar {
+		position: fixed;
+		inset-inline: 0;
+		bottom: 0;
+		z-index: 60;
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		padding: 0.35rem 0.5rem calc(0.35rem + env(safe-area-inset-bottom));
+		background: var(--tb-surface);
+		background: color-mix(in srgb, var(--tb-surface) 88%, transparent);
+		-webkit-backdrop-filter: blur(12px);
+		backdrop-filter: blur(12px);
+		border-top: 1px solid var(--tb-border);
+	}
+
+	body:has(.tb-tabbar) {
+		padding-bottom: 58px;
+	}
+
+	body:has(.tb-tabbar) .tb-to-top {
+		bottom: 4.6rem;
+	}
+}
+
+.tb-tab {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	padding: 0.3rem 0;
+	background: none;
+	border: 0;
+	color: var(--tb-muted);
+	font: inherit;
+	font-size: 0.625rem;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.tb-tab svg {
+	width: 22px;
+	height: 22px;
+}
+
+.tb-tab.is-active,
+.tb-tab:active {
+	color: var(--tb-primary, #2f7fe0);
 }
 
 /* Search bar as floating panel */
