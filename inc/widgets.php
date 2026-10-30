@@ -180,6 +180,9 @@ function tobpress_register_widgets() {
 	register_widget( 'TobPress_Hot_Posts_Widget' );
 	register_widget( 'TobPress_Recent_Comments_Widget' );
 	register_widget( 'TobPress_Stats_Widget' );
+	register_widget( 'TobPress_Readers_Widget' );
+	register_widget( 'TobPress_Random_Widget' );
+	register_widget( 'TobPress_Tags_Widget' );
 }
 add_action( 'widgets_init', 'tobpress_register_widgets' );
 
@@ -221,5 +224,162 @@ class TobPress_Stats_Widget extends WP_Widget {
 
 	public function update( $new, $old ) {
 		return array( 'title' => sanitize_text_field( isset( $new['title'] ) ? $new['title'] : '' ) );
+	}
+}
+
+class TobPress_Readers_Widget extends WP_Widget {
+	public function __construct() {
+		parent::__construct(
+			'tobpress_readers',
+			__( 'TobPress：读者墙', 'tobpress' ),
+			array( 'description' => __( '近期评论者头像墙（不含博主本人）。', 'tobpress' ) )
+		);
+	}
+
+	public function widget( $args, $instance ) {
+		$count = isset( $instance['count'] ) ? max( 4, min( 24, absint( $instance['count'] ) ) ) : 12;
+		$admin = strtolower( (string) get_option( 'admin_email' ) );
+		$seen  = array();
+		$items = array();
+		foreach ( get_comments( array( 'status' => 'approve', 'type' => 'comment', 'number' => 80, 'orderby' => 'comment_date_gmt', 'order' => 'DESC' ) ) as $comment ) {
+			$email = strtolower( trim( (string) $comment->comment_author_email ) );
+			if ( '' === $email || $email === $admin || isset( $seen[ $email ] ) ) {
+				continue;
+			}
+			$seen[ $email ] = true;
+			$items[]        = $comment;
+			if ( count( $items ) >= $count ) {
+				break;
+			}
+		}
+		if ( ! $items ) {
+			return;
+		}
+		$title = isset( $instance['title'] ) && '' !== $instance['title'] ? $instance['title'] : __( '读者墙', 'tobpress' );
+		echo $args['before_widget']; // phpcs:ignore WordPress.Security.EscapeOutput
+		echo $args['before_title'] . esc_html( $title ) . $args['after_title']; // phpcs:ignore WordPress.Security.EscapeOutput
+		echo '<div class="tb-readers">';
+		foreach ( $items as $comment ) {
+			$label = $comment->comment_author . ' · 《' . get_the_title( $comment->comment_post_ID ) . '》';
+			echo '<a class="tb-reader" href="' . esc_url( get_comment_link( $comment ) ) . '" title="' . esc_attr( $label ) . '">' . get_avatar( $comment, 44, '', '', array( 'class' => 'tb-reader-avatar' ) ) . '</a>'; // phpcs:ignore WordPress.Security.EscapeOutput -- avatar markup is core-generated.
+		}
+		echo '</div>';
+		echo $args['after_widget']; // phpcs:ignore WordPress.Security.EscapeOutput
+	}
+
+	public function form( $instance ) {
+		$title = isset( $instance['title'] ) ? $instance['title'] : '';
+		$count = isset( $instance['count'] ) ? absint( $instance['count'] ) : 12;
+		?>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( '标题：', 'tobpress' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+		</p>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>"><?php esc_html_e( '头像数量：', 'tobpress' ); ?></label>
+			<input class="tiny-text" id="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'count' ) ); ?>" type="number" min="4" max="24" value="<?php echo esc_attr( $count ); ?>">
+		</p>
+		<?php
+	}
+
+	public function update( $new, $old ) {
+		return array(
+			'title' => sanitize_text_field( isset( $new['title'] ) ? $new['title'] : '' ),
+			'count' => isset( $new['count'] ) ? absint( $new['count'] ) : 12,
+		);
+	}
+}
+
+class TobPress_Random_Widget extends WP_Widget {
+	public function __construct() {
+		parent::__construct(
+			'tobpress_random',
+			__( 'TobPress：随机文章', 'tobpress' ),
+			array( 'description' => __( '随机抽取已发布文章，便于读者发现旧文。', 'tobpress' ) )
+		);
+	}
+
+	public function widget( $args, $instance ) {
+		$count = isset( $instance['count'] ) ? max( 1, min( 10, absint( $instance['count'] ) ) ) : 5;
+		$posts = get_posts( array( 'posts_per_page' => $count, 'orderby' => 'rand', 'post_status' => 'publish', 'no_found_rows' => true ) );
+		if ( ! $posts ) {
+			return;
+		}
+		$title = isset( $instance['title'] ) && '' !== $instance['title'] ? $instance['title'] : __( '随机文章', 'tobpress' );
+		echo $args['before_widget']; // phpcs:ignore WordPress.Security.EscapeOutput
+		echo $args['before_title'] . esc_html( $title ) . $args['after_title']; // phpcs:ignore WordPress.Security.EscapeOutput
+		echo '<ul class="tb-mini-list">';
+		foreach ( $posts as $post ) { // phpcs:ignore WordPress.WP.GlobalVariablesOverride
+			echo '<li><a href="' . esc_url( get_permalink( $post ) ) . '"><span class="tb-mini-title">' . esc_html( get_the_title( $post ) ) . '</span><span class="tb-mini-date">' . esc_html( get_the_date( '', $post ) ) . '</span></a></li>';
+		}
+		echo '</ul>';
+		echo $args['after_widget']; // phpcs:ignore WordPress.Security.EscapeOutput
+	}
+
+	public function form( $instance ) {
+		$title = isset( $instance['title'] ) ? $instance['title'] : '';
+		$count = isset( $instance['count'] ) ? absint( $instance['count'] ) : 5;
+		?>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( '标题：', 'tobpress' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+		</p>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>"><?php esc_html_e( '文章数量：', 'tobpress' ); ?></label>
+			<input class="tiny-text" id="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'count' ) ); ?>" type="number" min="1" max="10" value="<?php echo esc_attr( $count ); ?>">
+		</p>
+		<?php
+	}
+
+	public function update( $new, $old ) {
+		return array(
+			'title' => sanitize_text_field( isset( $new['title'] ) ? $new['title'] : '' ),
+			'count' => isset( $new['count'] ) ? absint( $new['count'] ) : 5,
+		);
+	}
+}
+
+class TobPress_Tags_Widget extends WP_Widget {
+	public function __construct() {
+		parent::__construct(
+			'tobpress_tags',
+			__( 'TobPress：标签云', 'tobpress' ),
+			array( 'description' => __( '胶囊样式标签云，按文章数排序。', 'tobpress' ) )
+		);
+	}
+
+	public function widget( $args, $instance ) {
+		$count = isset( $instance['count'] ) ? max( 5, min( 60, absint( $instance['count'] ) ) ) : 30;
+		$cloud = wp_tag_cloud( array( 'smallest' => 0.8125, 'largest' => 0.8125, 'unit' => 'rem', 'format' => 'flat', 'separator' => ' ', 'orderby' => 'count', 'order' => 'DESC', 'number' => $count, 'echo' => false ) );
+		if ( ! $cloud ) {
+			return;
+		}
+		$title = isset( $instance['title'] ) && '' !== $instance['title'] ? $instance['title'] : __( '标签云', 'tobpress' );
+		echo $args['before_widget']; // phpcs:ignore WordPress.Security.EscapeOutput
+		echo $args['before_title'] . esc_html( $title ) . $args['after_title']; // phpcs:ignore WordPress.Security.EscapeOutput
+		echo '<div class="tb-tagcloud">' . $cloud . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- tag cloud markup is core-generated with escaped values.
+		echo $args['after_widget']; // phpcs:ignore WordPress.Security.EscapeOutput
+	}
+
+	public function form( $instance ) {
+		$title = isset( $instance['title'] ) ? $instance['title'] : '';
+		$count = isset( $instance['count'] ) ? absint( $instance['count'] ) : 30;
+		?>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( '标题：', 'tobpress' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+		</p>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>"><?php esc_html_e( '标签数量：', 'tobpress' ); ?></label>
+			<input class="tiny-text" id="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'count' ) ); ?>" type="number" min="5" max="60" value="<?php echo esc_attr( $count ); ?>">
+		</p>
+		<?php
+	}
+
+	public function update( $new, $old ) {
+		return array(
+			'title' => sanitize_text_field( isset( $new['title'] ) ? $new['title'] : '' ),
+			'count' => isset( $new['count'] ) ? absint( $new['count'] ) : 30,
+		);
 	}
 }
