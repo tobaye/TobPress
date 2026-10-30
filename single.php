@@ -111,7 +111,7 @@ $tobpress_has_sidebar = is_active_sidebar( 'sidebar-main' ) && 'no-sidebar' !== 
 					<?php endif; ?>
 
 					<div class="tb-author-card">
-						<?php echo get_avatar( get_the_author_meta( 'ID' ), 72, '', '', array( 'class' => 'tb-author-avatar' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- core returns escaped markup. ?>
+						<?php echo tobpress_avatar( get_the_author_meta( 'ID' ), 72, array( 'class' => 'tb-author-avatar' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- avatar markup is core-generated or a plain letter span. ?>
 						<div class="tb-author-main">
 							<p class="tb-author-name">
 								<?php echo esc_html( get_the_author_meta( 'display_name' ) ); ?>
