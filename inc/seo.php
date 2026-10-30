@@ -59,6 +59,12 @@ function tobpress_seo_canonical() {
 function tobpress_seo_description() {
 	if ( is_singular() ) {
 		$post = get_queried_object();
+		if ( $post ) {
+			$custom_desc = trim( (string) get_post_meta( $post->ID, '_tobpress_seo_desc', true ) );
+			if ( '' !== $custom_desc ) {
+				return $custom_desc;
+			}
+		}
 		if ( $post && ! empty( $post->post_excerpt ) ) {
 			return wp_trim_words( wp_strip_all_tags( $post->post_excerpt ), 40, '' );
 		}
@@ -134,3 +140,53 @@ function tobpress_seo_output() {
 	}
 }
 add_action( 'wp_head', 'tobpress_seo_output', 5 );
+
+/* ------------------------------------------------------------------
+ * Per-post SEO description: a small meta box on the post/page editor.
+ * Stored as _tobpress_seo_desc; tobpress_seo_description() prefers it
+ * over the excerpt and the auto-trimmed content.
+ * ------------------------------------------------------------------ */
+
+function tobpress_seo_meta_box() {
+	foreach ( array( 'post', 'page' ) as $screen ) {
+		add_meta_box(
+			'tobpress_seo_desc',
+			__( 'TobPress：SEO 描述', 'tobpress' ),
+			'tobpress_seo_meta_box_html',
+			$screen,
+			'normal',
+			'default'
+		);
+	}
+}
+add_action( 'add_meta_boxes', 'tobpress_seo_meta_box' );
+
+function tobpress_seo_meta_box_html( $post ) {
+	wp_nonce_field( 'tobpress_seo_desc_save', 'tobpress_seo_desc_nonce' );
+	$value = (string) get_post_meta( $post->ID, '_tobpress_seo_desc', true );
+	?>
+	<p>
+		<label class="screen-reader-text" for="tobpress-seo-desc"><?php esc_html_e( 'SEO 描述', 'tobpress' ); ?></label>
+		<textarea id="tobpress-seo-desc" name="tobpress_seo_desc" rows="3" class="large-text" maxlength="300" placeholder="<?php esc_attr_e( '留空则自动使用摘要或正文开头。建议 60–120 字，写清这篇讲什么。', 'tobpress' ); ?>"><?php echo esc_textarea( $value ); ?></textarea>
+	</p>
+	<?php
+}
+
+function tobpress_seo_meta_box_save( $post_id ) {
+	if ( ! isset( $_POST['tobpress_seo_desc_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['tobpress_seo_desc_nonce'] ) ), 'tobpress_seo_desc_save' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		return;
+	}
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		return;
+	}
+	$value = isset( $_POST['tobpress_seo_desc'] ) ? sanitize_textarea_field( wp_unslash( $_POST['tobpress_seo_desc'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	if ( '' === $value ) {
+		delete_post_meta( $post_id, '_tobpress_seo_desc' );
+	} else {
+		update_post_meta( $post_id, '_tobpress_seo_desc', $value );
+	}
+}
+add_action( 'save_post', 'tobpress_seo_meta_box_save' );
