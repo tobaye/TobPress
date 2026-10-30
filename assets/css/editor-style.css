@@ -1,0 +1,25 @@
+/**
+ * TobPress editor styles: keep the block editor close to the
+ * front-end reading experience (width, rhythm, link colour).
+ * Token variables come from theme.json global styles; this file
+ * only adds editor-canvas specifics.
+ */
+
+body {
+	line-height: 1.85;
+}
+
+.editor-styles-wrapper a {
+	text-decoration: underline;
+	text-underline-offset: 0.18em;
+}
+
+.editor-styles-wrapper blockquote {
+	border-left: 3px solid var(--wp--preset--color--primary);
+	padding-left: 1em;
+	margin-left: 0;
+}
+
+.editor-styles-wrapper pre {
+	border-radius: 12px;
+}
