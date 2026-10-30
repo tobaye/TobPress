@@ -4,7 +4,7 @@ Theme URI: https://github.com/tobaye/TobPress
 Author: Mi
 Author URI: https://helyn.eu.org
 Description: A light, modern hybrid WordPress theme for personal blogs. Design tokens live in theme.json; the Customizer only carries blog-specific switches. Light blue-and-white by default, dark-mode ready, zero jQuery.
-Version: 1.1.0
+Version: 1.1.1
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.0
@@ -1959,6 +1959,18 @@ html[data-theme="dark"] .tb-theme-toggle .tb-icon-moon {
 
 .tb-author-avatar {
 	border-radius: 50%;
+}
+
+.tb-letter-avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: linear-gradient(135deg, var(--tb-primary, #2f7fe0), var(--tb-accent, #f2994a));
+	color: #fff;
+	font-weight: 700;
+	line-height: 1;
+	flex: none;
 }
 
 .tb-author-main {
