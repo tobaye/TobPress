@@ -30,7 +30,7 @@ function tobpress_post_meta( $post_id = 0 ) {
 	$parts   = array();
 	$author  = (int) get_post_field( 'post_author', $post_id );
 	if ( $author ) {
-		$parts[] = '<span class="tb-meta-author">' . get_avatar( $author, 22, '', '', array( 'class' => 'tb-meta-avatar' ) ) . '<a href="' . esc_url( get_author_posts_url( $author ) ) . '">' . esc_html( get_the_author_meta( 'display_name', $author ) ) . '</a></span>';
+		$parts[] = '<span class="tb-meta-author">' . tobpress_avatar( $author, 22, array( 'class' => 'tb-meta-avatar' ) ) . '<a href="' . esc_url( get_author_posts_url( $author ) ) . '">' . esc_html( get_the_author_meta( 'display_name', $author ) ) . '</a></span>';
 	}
 	$tobpress_ts = get_post_time( 'U', true, $post_id );
 	if ( $tobpress_ts && ( time() - $tobpress_ts ) < 30 * DAY_IN_SECONDS && ( time() - $tobpress_ts ) > 0 ) {
@@ -241,4 +241,54 @@ function tobpress_share_row( $post_id = 0 ) {
 		<a class="tb-share-btn" href="<?php echo esc_url( 'mailto:?subject=' . rawurlencode( $title ) . '&body=' . rawurlencode( $url ) ); ?>"><?php esc_html_e( '邮件', 'tobpress' ); ?></a>
 	</div>
 	<?php
+}
+
+/**
+ * Whether a registered user has a real Gravatar (not the site
+ * default silhouette). Probed once via Gravatar's d=404 endpoint
+ * and cached in a transient for a week; on any network error we
+ * assume "has avatar" so the fallback never misfires.
+ */
+function tobpress_user_has_gravatar( $user ) {
+	$email = strtolower( trim( (string) $user->user_email ) );
+	if ( '' === $email ) {
+		return true;
+	}
+	$key    = 'tobpress_grav_' . md5( $email );
+	$cached = get_transient( $key );
+	if ( false !== $cached ) {
+		return '1' === $cached;
+	}
+	$resp = wp_remote_head( 'https://secure.gravatar.com/avatar/' . md5( $email ) . '?d=404&s=80', array( 'timeout' => 2 ) );
+	if ( is_wp_error( $resp ) ) {
+		set_transient( $key, '1', HOUR_IN_SECONDS );
+		return true;
+	}
+	$has = 200 === (int) wp_remote_retrieve_response_code( $resp );
+	set_transient( $key, $has ? '1' : '0', WEEK_IN_SECONDS );
+	return $has;
+}
+
+/**
+ * Avatar with a letter fallback: when a registered user has no real
+ * Gravatar, render the first character of their display name on a
+ * theme gradient instead of the grey default silhouette.
+ */
+function tobpress_avatar( $id_or_email, $size, $args = array() ) {
+	$user = null;
+	if ( is_numeric( $id_or_email ) ) {
+		$user = get_userdata( (int) $id_or_email );
+	} elseif ( $id_or_email instanceof WP_User ) {
+		$user = $id_or_email;
+	}
+	if ( $user && ! tobpress_user_has_gravatar( $user ) ) {
+		$name    = (string) $user->display_name;
+		$initial = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 1 ) : substr( $name, 0, 1 );
+		if ( preg_match( '/^[a-z]$/', $initial ) ) {
+			$initial = strtoupper( $initial );
+		}
+		$class = isset( $args['class'] ) ? (string) $args['class'] : '';
+		return '<span class="' . esc_attr( trim( $class . ' tb-letter-avatar' ) ) . '" style="width:' . (int) $size . 'px;height:' . (int) $size . 'px;font-size:' . max( 10, (int) round( $size * 0.45 ) ) . 'px" aria-hidden="true">' . esc_html( $initial ) . '</span>';
+	}
+	return get_avatar( $id_or_email, $size, '', '', $args );
 }
