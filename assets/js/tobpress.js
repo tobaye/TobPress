@@ -108,6 +108,16 @@
 		});
 	}
 
+	/* ---------------- Mobile tab bar (proxy to header controls) ---------------- */
+	document.querySelectorAll('[data-tab-proxy]').forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			var target = document.querySelector(btn.getAttribute('data-tab-proxy'));
+			if (target) {
+				target.click();
+			}
+		});
+	});
+
 	/* ---------------- Featured carousel ---------------- */
 	var track = document.getElementById('tb-carousel-track');
 	if (track) {
