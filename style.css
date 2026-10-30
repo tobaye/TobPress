@@ -2069,6 +2069,134 @@ html[data-theme="dark"] .tb-theme-toggle .tb-icon-moon {
 	color: var(--tb-primary, #2f7fe0);
 }
 
+/* Notice bar */
+.tb-notice {
+	background: var(--tb-surface);
+	background: color-mix(in srgb, var(--tb-primary, #2f7fe0) 10%, var(--tb-surface));
+	border-bottom: 1px solid var(--tb-border);
+	font-size: var(--wp--preset--font-size--small);
+}
+
+.tb-notice-in {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	padding-block: 0.45rem;
+}
+
+.tb-notice-badge {
+	flex: none;
+	padding: 0.1em 0.6em;
+	border-radius: 999px;
+	background: var(--tb-primary, #2f7fe0);
+	color: #fff;
+	font-size: 0.75rem;
+}
+
+.tb-notice-text {
+	flex: 1;
+	min-width: 0;
+	color: var(--tb-text);
+	text-decoration: none;
+}
+
+a.tb-notice-text:hover {
+	text-decoration: underline;
+}
+
+.tb-notice-close {
+	flex: none;
+	display: inline-flex;
+	padding: 0.2rem;
+	background: none;
+	border: 0;
+	color: var(--tb-muted);
+	cursor: pointer;
+}
+
+.tb-notice-close svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* Password-visible form */
+.tb-pass-form {
+	margin-block: 1.2em;
+	padding: 1em 1.1em;
+	border: 1px dashed var(--tb-border);
+	border-radius: var(--tb-radius-s);
+	background: var(--tb-surface);
+}
+
+.tb-pass-hint {
+	margin: 0 0 0.6em;
+	color: var(--tb-muted);
+}
+
+.tb-pass-row {
+	display: flex;
+	gap: 0.5rem;
+	margin: 0;
+}
+
+.tb-pass-row input[type="password"] {
+	flex: 1;
+	min-width: 0;
+	padding: 0.45em 0.7em;
+	border: 1px solid var(--tb-border);
+	border-radius: var(--tb-radius-s);
+	background: var(--tb-bg);
+	color: var(--tb-text);
+	font: inherit;
+}
+
+.tb-pass-row button {
+	flex: none;
+	padding: 0.45em 1.1em;
+	border: 0;
+	border-radius: var(--tb-radius-s);
+	background: var(--tb-primary, #2f7fe0);
+	color: #fff;
+	font: inherit;
+	cursor: pointer;
+}
+
+.tb-pass-error {
+	margin: 0.6em 0 0;
+	color: #e5484d;
+}
+
+/* Readers wall + tag cloud widgets */
+.tb-readers {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+}
+
+.tb-reader {
+	display: inline-flex;
+}
+
+.tb-reader-avatar {
+	border-radius: 50%;
+	display: block;
+}
+
+.tb-tagcloud a {
+	display: inline-block;
+	margin: 0 0.35em 0.45em 0;
+	padding: 0.28em 0.8em;
+	border: 1px solid var(--tb-border);
+	border-radius: 999px;
+	color: var(--tb-muted);
+	text-decoration: none;
+}
+
+.tb-tagcloud a:hover {
+	border-color: var(--tb-primary, #2f7fe0);
+	color: var(--tb-primary, #2f7fe0);
+}
+
 /* Search bar as floating panel */
 .tb-search-bar {
 	padding: 14px 16px;
