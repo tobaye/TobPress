@@ -110,6 +110,18 @@ $tobpress_has_sidebar = is_active_sidebar( 'sidebar-main' ) && 'no-sidebar' !== 
 						<div class="tb-copyright"><?php echo esc_html( $tobpress_copyright ); ?></div>
 					<?php endif; ?>
 
+					<div class="tb-author-card">
+						<?php echo get_avatar( get_the_author_meta( 'ID' ), 72, '', '', array( 'class' => 'tb-author-avatar' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- core returns escaped markup. ?>
+						<div class="tb-author-main">
+							<p class="tb-author-name">
+								<?php echo esc_html( get_the_author_meta( 'display_name' ) ); ?>
+								<span class="tb-author-count"><?php echo esc_html( sprintf( /* translators: %s: post count. */ __( '共 %s 篇文章', 'tobpress' ), number_format_i18n( (int) count_user_posts( get_the_author_meta( 'ID' ) ) ) ) ); ?></span>
+							</p>
+							<p class="tb-author-bio"><?php echo esc_html( (string) ( get_the_author_meta( 'description' ) ?: get_bloginfo( 'description' ) ) ); ?></p>
+						</div>
+						<a class="tb-author-more" href="<?php echo esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ); ?>"><?php esc_html_e( '全部文章', 'tobpress' ); ?></a>
+					</div>
+
 					<?php
 					$tobpress_prev = get_previous_post();
 					$tobpress_next = get_next_post();
