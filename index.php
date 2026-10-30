@@ -16,6 +16,42 @@ $tobpress_card_style  = (string) get_theme_mod( 'tobpress_card_style', 'list' );
 		<main class="tb-main" id="tb-content">
 
 			<?php
+			// Welcome strip: front page only, first page only.
+			if ( is_front_page() && ! is_paged() && get_theme_mod( 'tobpress_show_welcome', true ) ) :
+				$tobpress_welcome_text = trim( (string) get_theme_mod( 'tobpress_welcome_text', '' ) );
+				if ( '' === $tobpress_welcome_text ) {
+					$tobpress_welcome_text = (string) get_bloginfo( 'description' );
+				}
+				$tobpress_welcome_logo = '';
+				$tobpress_custom_logo  = (int) get_theme_mod( 'custom_logo' );
+				if ( $tobpress_custom_logo ) {
+					$tobpress_welcome_logo = (string) wp_get_attachment_image_url( $tobpress_custom_logo, 'thumbnail' );
+				}
+				if ( '' === $tobpress_welcome_logo ) {
+					$tobpress_welcome_logo = (string) get_site_icon_url( 96 );
+				}
+				$tobpress_welcome_stats = function_exists( 'tobpress_site_stats' ) ? tobpress_site_stats() : null;
+				?>
+				<section class="tb-welcome" aria-label="<?php esc_attr_e( '欢迎', 'tobpress' ); ?>">
+					<?php if ( '' !== $tobpress_welcome_logo ) : ?>
+						<img class="tb-welcome-avatar" src="<?php echo esc_url( $tobpress_welcome_logo ); ?>" alt="" width="56" height="56" loading="lazy">
+					<?php endif; ?>
+					<div class="tb-welcome-main">
+						<h2 class="tb-welcome-title"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></h2>
+						<?php if ( '' !== $tobpress_welcome_text ) : ?>
+							<p class="tb-welcome-text"><?php echo esc_html( $tobpress_welcome_text ); ?></p>
+						<?php endif; ?>
+					</div>
+					<?php if ( is_array( $tobpress_welcome_stats ) ) : ?>
+						<div class="tb-welcome-chips">
+							<span class="tb-chip"><?php echo esc_html( sprintf( /* translators: %s: post count. */ __( '文章 %s', 'tobpress' ), number_format_i18n( $tobpress_welcome_stats['posts'] ) ) ); ?></span>
+							<span class="tb-chip"><?php echo esc_html( sprintf( /* translators: %s: days count. */ __( '运行 %s 天', 'tobpress' ), number_format_i18n( $tobpress_welcome_stats['days'] ) ) ); ?></span>
+						</div>
+					<?php endif; ?>
+				</section>
+			<?php endif; ?>
+
+			<?php
 			// Featured carousel: front page only, first page only.
 			if ( is_front_page() && ! is_paged() && get_theme_mod( 'tobpress_show_carousel', true ) ) :
 				$tobpress_slides = get_posts(
