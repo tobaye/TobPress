@@ -134,3 +134,69 @@ function tobpress_shortcode_reply( $atts, $content = '' ) {
 		. '</div>';
 }
 add_shortcode( 'tobpress_reply', 'tobpress_shortcode_reply' );
+
+/* ------------------------------------------------------------------
+ * Password-visible content: [tobpress_pass pwd="1234"]...[/tobpress_pass]
+ * The unlock form posts back to the same article; tobpress_pass_unlock()
+ * verifies against every password used on that post and sets an
+ * HMAC cookie per post, so several blocks can share one unlock.
+ * ------------------------------------------------------------------ */
+
+function tobpress_pass_token( $post_id, $pwd ) {
+	return hash_hmac( 'sha256', (int) $post_id . '|' . (string) $pwd, wp_salt() );
+}
+
+function tobpress_shortcode_pass( $atts, $content = '' ) {
+	if ( ! is_singular() ) {
+		return '';
+	}
+	$atts    = shortcode_atts( array( 'pwd' => '' ), $atts, 'tobpress_pass' );
+	$pwd     = (string) $atts['pwd'];
+	$post_id = (int) get_the_ID();
+	if ( '' === $pwd || ! $post_id ) {
+		return '';
+	}
+	$cookie = 'tobpress_pass_' . $post_id;
+	if ( isset( $_COOKIE[ $cookie ] ) && is_string( $_COOKIE[ $cookie ] ) && hash_equals( tobpress_pass_token( $post_id, $pwd ), $_COOKIE[ $cookie ] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		return do_shortcode( (string) $content );
+	}
+	$failed = isset( $_GET['tb_pass_err'] ) && '1' === (string) $_GET['tb_pass_err']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	$html   = '<form class="tb-pass-form" method="post" action="' . esc_url( get_permalink( $post_id ) ) . '">'
+		. '<p class="tb-pass-hint">' . esc_html__( '此内容需密码查看，请输入密码：', 'tobpress' ) . '</p>'
+		. '<p class="tb-pass-row">'
+		. '<input type="password" name="tobpress_pass_try" autocomplete="off" required>'
+		. '<input type="hidden" name="tobpress_pass_post" value="' . $post_id . '">'
+		. '<button type="submit">' . esc_html__( '查看', 'tobpress' ) . '</button>'
+		. '</p>';
+	if ( $failed ) {
+		$html .= '<p class="tb-pass-error">' . esc_html__( '密码不正确，请重试。', 'tobpress' ) . '</p>';
+	}
+	$html .= '</form>';
+	return $html;
+}
+add_shortcode( 'tobpress_pass', 'tobpress_shortcode_pass' );
+
+function tobpress_pass_unlock() {
+	if ( 'POST' !== ( $_SERVER['REQUEST_METHOD'] ?? '' ) || empty( $_POST['tobpress_pass_post'] ) || ! isset( $_POST['tobpress_pass_try'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		return;
+	}
+	$post_id = (int) $_POST['tobpress_pass_post']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	$try     = sanitize_text_field( wp_unslash( $_POST['tobpress_pass_try'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	$post    = get_post( $post_id );
+	if ( ! $post ) {
+		return;
+	}
+	$target = get_permalink( $post_id );
+	if ( preg_match_all( '/\[tobpress_pass[^\]]*?pwd=["\']([^"\']+)["\']/', (string) $post->post_content, $m ) ) {
+		foreach ( $m[1] as $pwd ) {
+			if ( hash_equals( (string) $pwd, $try ) ) {
+				setcookie( 'tobpress_pass_' . $post_id, tobpress_pass_token( $post_id, $pwd ), time() + 30 * DAY_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
+				wp_safe_redirect( $target );
+				exit;
+			}
+		}
+	}
+	wp_safe_redirect( add_query_arg( 'tb_pass_err', '1', $target ) );
+	exit;
+}
+add_action( 'init', 'tobpress_pass_unlock' );
