@@ -22,13 +22,12 @@ $tobpress_card_style  = (string) get_theme_mod( 'tobpress_card_style', 'list' );
 				if ( '' === $tobpress_welcome_text ) {
 					$tobpress_welcome_text = (string) get_bloginfo( 'description' );
 				}
-				$tobpress_welcome_logo = '';
-				$tobpress_custom_logo  = (int) get_theme_mod( 'custom_logo' );
-				if ( $tobpress_custom_logo ) {
-					$tobpress_welcome_logo = (string) wp_get_attachment_image_url( $tobpress_custom_logo, 'thumbnail' );
-				}
+				$tobpress_welcome_logo = (string) get_site_icon_url( 96 );
 				if ( '' === $tobpress_welcome_logo ) {
-					$tobpress_welcome_logo = (string) get_site_icon_url( 96 );
+					$tobpress_custom_logo = (int) get_theme_mod( 'custom_logo' );
+					if ( $tobpress_custom_logo ) {
+						$tobpress_welcome_logo = (string) wp_get_attachment_image_url( $tobpress_custom_logo, 'thumbnail' );
+					}
 				}
 				$tobpress_welcome_stats = function_exists( 'tobpress_site_stats' ) ? tobpress_site_stats() : null;
 				?>
