@@ -108,6 +108,29 @@
 		});
 	}
 
+	/* ---------------- Notice bar (dismiss per content hash) ---------------- */
+	var notice = document.getElementById('tb-notice');
+	if (notice) {
+		var noticeKey = 'tobpress_notice_closed';
+		var noticeHash = notice.getAttribute('data-notice') || '';
+		var noticeClosed = '';
+		try {
+			noticeClosed = window.localStorage.getItem(noticeKey) || '';
+		} catch (e) {}
+		if (noticeClosed !== noticeHash) {
+			notice.hidden = false;
+		}
+		var noticeClose = document.getElementById('tb-notice-close');
+		if (noticeClose) {
+			noticeClose.addEventListener('click', function () {
+				notice.hidden = true;
+				try {
+					window.localStorage.setItem(noticeKey, noticeHash);
+				} catch (e) {}
+			});
+		}
+	}
+
 	/* ---------------- Mobile tab bar (proxy to header controls) ---------------- */
 	document.querySelectorAll('[data-tab-proxy]').forEach(function (btn) {
 		btn.addEventListener('click', function () {
