@@ -97,6 +97,56 @@ function tobpress_customize( $wp_customize ) {
 		)
 	);
 
+	// Homepage welcome strip.
+	$wp_customize->add_setting(
+		'tobpress_show_welcome',
+		array(
+			'default'           => true,
+			'sanitize_callback' => 'tobpress_sanitize_bool',
+		)
+	);
+	$wp_customize->add_control(
+		'tobpress_show_welcome',
+		array(
+			'label'   => __( '在首页显示欢迎条', 'tobpress' ),
+			'section' => 'tobpress_options',
+			'type'    => 'checkbox',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'tobpress_welcome_text',
+		array(
+			'default'           => '',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'tobpress_welcome_text',
+		array(
+			'label'       => __( '欢迎条文案（留空使用站点副标题）', 'tobpress' ),
+			'section'     => 'tobpress_options',
+			'type'        => 'text',
+		)
+	);
+
+	// Mobile bottom tab bar.
+	$wp_customize->add_setting(
+		'tobpress_mobile_tabbar',
+		array(
+			'default'           => true,
+			'sanitize_callback' => 'tobpress_sanitize_bool',
+		)
+	);
+	$wp_customize->add_control(
+		'tobpress_mobile_tabbar',
+		array(
+			'label'   => __( '显示移动端底部导航栏', 'tobpress' ),
+			'section' => 'tobpress_options',
+			'type'    => 'checkbox',
+		)
+	);
+
 	// Related posts count.
 	$wp_customize->add_setting(
 		'tobpress_related_count',
