@@ -81,6 +81,31 @@ $tobpress_years      = ( $tobpress_year_start < $tobpress_year_now ) ? $tobpress
 	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
+<?php if ( get_theme_mod( 'tobpress_mobile_tabbar', true ) ) : ?>
+<nav class="tb-tabbar" aria-label="<?php esc_attr_e( '移动端快捷导航', 'tobpress' ); ?>">
+	<a class="tb-tab<?php echo is_front_page() ? ' is-active' : ''; ?>" href="<?php echo esc_url( home_url( '/' ) ); ?>"<?php echo is_front_page() ? ' aria-current="page"' : ''; ?>>
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.2 12 4l9 7.2"/><path d="M5.8 9.8V20h12.4V9.8"/></svg>
+		<span><?php esc_html_e( '首页', 'tobpress' ); ?></span>
+	</a>
+	<button type="button" class="tb-tab" data-tab-proxy=".tb-search-toggle">
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.6-4.6"/></svg>
+		<span><?php esc_html_e( '搜索', 'tobpress' ); ?></span>
+	</button>
+	<button type="button" class="tb-tab" data-tab-proxy=".tb-theme-toggle">
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13.6A8.4 8.4 0 1 1 10.4 4a6.8 6.8 0 0 0 9.6 9.6z"/></svg>
+		<span><?php esc_html_e( '深色', 'tobpress' ); ?></span>
+	</button>
+	<button type="button" class="tb-tab" data-tab-proxy=".tb-menu-toggle">
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+		<span><?php esc_html_e( '菜单', 'tobpress' ); ?></span>
+	</button>
+	<button type="button" class="tb-tab" data-tab-proxy="#tb-to-top">
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+		<span><?php esc_html_e( '顶部', 'tobpress' ); ?></span>
+	</button>
+</nav>
+<?php endif; ?>
+
 <?php wp_footer(); ?>
 </body>
 </html>
