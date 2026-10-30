@@ -147,6 +147,39 @@ function tobpress_customize( $wp_customize ) {
 		)
 	);
 
+	// Site-wide notice bar (empty text hides the bar).
+	$wp_customize->add_setting(
+		'tobpress_notice_text',
+		array(
+			'default'           => '',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'tobpress_notice_text',
+		array(
+			'label'       => __( '顶部公告文案（留空不显示公告条）', 'tobpress' ),
+			'section'     => 'tobpress_options',
+			'type'        => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'tobpress_notice_url',
+		array(
+			'default'           => '',
+			'sanitize_callback' => 'esc_url_raw',
+		)
+	);
+	$wp_customize->add_control(
+		'tobpress_notice_url',
+		array(
+			'label'       => __( '顶部公告链接（可空）', 'tobpress' ),
+			'section'     => 'tobpress_options',
+			'type'        => 'url',
+		)
+	);
+
 	// Related posts count.
 	$wp_customize->add_setting(
 		'tobpress_related_count',
