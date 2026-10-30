@@ -21,6 +21,26 @@
 <div class="tb-progress" id="tb-progress" aria-hidden="true"></div>
 <?php endif; ?>
 
+<?php
+$tobpress_notice_text = trim( (string) get_theme_mod( 'tobpress_notice_text', '' ) );
+if ( '' !== $tobpress_notice_text ) :
+	$tobpress_notice_url = trim( (string) get_theme_mod( 'tobpress_notice_url', '' ) );
+	?>
+<div class="tb-notice" id="tb-notice" data-notice="<?php echo esc_attr( md5( $tobpress_notice_text ) ); ?>" hidden>
+	<div class="tb-wrap tb-notice-in">
+		<span class="tb-notice-badge"><?php esc_html_e( '公告', 'tobpress' ); ?></span>
+		<?php if ( '' !== $tobpress_notice_url ) : ?>
+			<a class="tb-notice-text" href="<?php echo esc_url( $tobpress_notice_url ); ?>"><?php echo esc_html( $tobpress_notice_text ); ?></a>
+		<?php else : ?>
+			<span class="tb-notice-text"><?php echo esc_html( $tobpress_notice_text ); ?></span>
+		<?php endif; ?>
+		<button type="button" class="tb-notice-close" id="tb-notice-close" aria-label="<?php esc_attr_e( '关闭公告', 'tobpress' ); ?>">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+		</button>
+	</div>
+</div>
+<?php endif; ?>
+
 <header class="tb-header">
 	<div class="tb-wrap tb-header-in">
 		<?php if ( has_custom_logo() ) : ?>
