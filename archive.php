@@ -15,10 +15,13 @@ $tobpress_card_style  = (string) get_theme_mod( 'tobpress_card_style', 'list' );
 		<main class="tb-main" id="tb-content">
 			<?php tobpress_breadcrumb(); ?>
 			<header class="tb-archive-head">
-				<?php
-				the_archive_title( '<h1 class="tb-archive-title">', '</h1>' );
-				the_archive_description( '<div class="tb-archive-desc">', '</div>' );
-				?>
+				<?php if ( is_category() ) : ?>
+					<?php $tobpress_term = get_queried_object(); ?>
+					<h1 class="tb-archive-title tb-archive-title-cat"><?php echo tobpress_cat_icon( $tobpress_term, 'tb-cat-ic-lg' ); // phpcs:ignore WordPress.Security.EscapeOutput -- built from escaped parts. ?><span><?php echo esc_html( $tobpress_term->name ); ?></span></h1>
+				<?php else : ?>
+					<?php the_archive_title( '<h1 class="tb-archive-title">', '</h1>' ); ?>
+				<?php endif; ?>
+				<?php the_archive_description( '<div class="tb-archive-desc">', '</div>' ); ?>
 			</header>
 
 			<?php if ( have_posts() ) : ?>

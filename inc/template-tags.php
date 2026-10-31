@@ -84,7 +84,7 @@ function tobpress_breadcrumb() {
 	if ( is_singular( 'post' ) ) {
 		$cats = get_the_category();
 		if ( $cats ) {
-			$items[] = '<a href="' . esc_url( get_category_link( $cats[0] ) ) . '">' . esc_html( $cats[0]->name ) . '</a>';
+			$items[] = tobpress_cat_link( $cats[0], 'tb-crumb-cat' );
 		}
 		$items[] = '<span aria-current="page">' . esc_html( get_the_title() ) . '</span>';
 	} elseif ( is_category() || is_tag() || is_tax() ) {

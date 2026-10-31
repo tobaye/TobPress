@@ -4,7 +4,7 @@ Theme URI: https://github.com/tobaye/TobPress
 Author: Mi
 Author URI: https://helyn.eu.org
 Description: A light, modern hybrid WordPress theme for personal blogs. Design tokens live in theme.json; the Customizer only carries blog-specific switches. Light blue-and-white by default, dark-mode ready, zero jQuery.
-Version: 1.1.2
+Version: 1.2.0
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.0
@@ -2354,4 +2354,97 @@ a.tb-notice-text:hover {
 
 .tb-footer-credit a:hover {
 	color: var(--tb-primary);
+}
+
+/* ===== Category icons (1.2.0) ===== */
+.tb-cat-ic {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: none;
+	line-height: 0;
+	color: var(--tb-cat-c, #888);
+}
+
+.tb-cat-ic svg {
+	width: 1.25em;
+	height: 1.25em;
+	display: block;
+}
+
+.tb-cat-ic-sm svg {
+	width: 1.05em;
+	height: 1.05em;
+}
+
+.tb-cat-ic-lg {
+	width: 52px;
+	height: 52px;
+	border-radius: 14px;
+	background: color-mix(in srgb, var(--tb-cat-c) 13%, transparent);
+}
+
+.tb-cat-ic-lg svg {
+	width: 30px;
+	height: 30px;
+}
+
+/* Header nav + mobile drawer: icon sits left of the category name. */
+.tb-nav-list > li > a {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+}
+
+.tb-mobile-menu .tb-nav-list a {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* Home category chips take the category color on hover and count pill. */
+.tb-chip:hover {
+	border-color: var(--tb-cat-c, var(--tb-primary));
+	color: var(--tb-cat-c, var(--tb-primary));
+}
+
+.tb-chip .tb-chip-count {
+	background: color-mix(in srgb, var(--tb-cat-c, var(--tb-primary)) 12%, transparent);
+}
+
+/* Post card category pills. */
+.tb-card-cats {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.tb-card-cat {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 2px 10px 3px 8px;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--tb-cat-c) 10%, transparent);
+	color: var(--tb-text);
+	line-height: 1.5;
+	transition: background 0.2s ease;
+}
+
+.tb-card-cat:hover {
+	background: color-mix(in srgb, var(--tb-cat-c) 20%, transparent);
+}
+
+/* Breadcrumb category link. */
+.tb-breadcrumb a {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+}
+
+/* Category archive header. */
+.tb-archive-title-cat {
+	display: flex;
+	align-items: center;
+	gap: 14px;
 }

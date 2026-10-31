@@ -130,7 +130,7 @@ $tobpress_card_style  = (string) get_theme_mod( 'tobpress_card_style', 'list' );
 					?>
 					<nav class="tb-cat-chips" aria-label="<?php esc_attr_e( '按分类浏览', 'tobpress' ); ?>">
 						<?php foreach ( $tobpress_cats as $tobpress_cat ) : ?>
-							<a class="tb-chip" href="<?php echo esc_url( get_category_link( $tobpress_cat ) ); ?>"><?php echo esc_html( $tobpress_cat->name ); ?><span class="tb-chip-count"><?php echo esc_html( number_format_i18n( $tobpress_cat->count ) ); ?></span></a>
+							<a class="tb-chip" style="--tb-cat-c:<?php echo esc_attr( tobpress_cat_color( $tobpress_cat ) ); ?>" href="<?php echo esc_url( get_category_link( $tobpress_cat ) ); ?>"><?php echo tobpress_cat_icon( $tobpress_cat ); // phpcs:ignore WordPress.Security.EscapeOutput -- built from escaped parts. ?><span><?php echo esc_html( $tobpress_cat->name ); ?></span><span class="tb-chip-count"><?php echo esc_html( number_format_i18n( $tobpress_cat->count ) ); ?></span></a>
 						<?php endforeach; ?>
 					</nav>
 					<?php

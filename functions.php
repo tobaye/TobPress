@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'TOBPRESS_VERSION', '1.1.2' );
+define( 'TOBPRESS_VERSION', '1.2.0' );
 
 /**
  * Theme setup.
@@ -181,6 +181,7 @@ function tobpress_excerpt_more( $more ) {
 add_filter( 'excerpt_more', 'tobpress_excerpt_more' );
 
 require get_template_directory() . '/inc/template-tags.php';
+require get_template_directory() . '/inc/category-icons.php';
 require get_template_directory() . '/inc/customizer.php';
 require get_template_directory() . '/inc/widgets.php';
 require get_template_directory() . '/inc/seo.php';

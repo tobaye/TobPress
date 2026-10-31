@@ -17,10 +17,10 @@ $tobpress_card_size = ( 'card' === get_theme_mod( 'tobpress_card_style', 'list' 
 	</a>
 	<div class="tb-card-body">
 		<?php
-		$tobpress_cats = get_the_category_list( ' ' );
+		$tobpress_cats = get_the_category();
 		if ( $tobpress_cats ) :
 			?>
-			<span class="tb-card-cats"><?php echo $tobpress_cats; // phpcs:ignore WordPress.Security.EscapeOutput -- core returns escaped links. ?></span>
+			<span class="tb-card-cats"><?php foreach ( $tobpress_cats as $tobpress_cat ) { echo tobpress_cat_link( $tobpress_cat, 'tb-card-cat' ); } // phpcs:ignore WordPress.Security.EscapeOutput -- built from escaped parts. ?></span>
 		<?php endif; ?>
 		<h2 class="tb-card-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 		<?php tobpress_post_meta(); ?>
